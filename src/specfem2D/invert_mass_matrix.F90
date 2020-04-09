@@ -111,7 +111,7 @@
         ! if external density model (elastic or acoustic)
         if (assign_external_model) then
           rhol = rhoext(i,j,ispec)
-          mul = rhol * vsext(i,j,ispec)
+          mul = rhol * vsext(i,j,ispec)**2
           if (AXISYM) then ! CHECK kappa mm
             kappal_relaxed = rhol * vpext(i,j,ispec)**2 - TWO_THIRDS * mul ! CHECK Kappa
           else
