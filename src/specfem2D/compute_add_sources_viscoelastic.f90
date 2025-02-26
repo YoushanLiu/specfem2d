@@ -63,7 +63,16 @@
       if (ispec_is_elastic(ispec)) then
 
         ! source time function
-        stf_used = source_time_function(i_source,it,i_stage)
+        if ((1 == SIMULATION_TYPE) .and. (1 == time_stepping_scheme)) then
+           ! For forward simulation using Newmark format, the source wavelet function at t+deltat time instant should be used in correction phase because a^(n+1) should be used.
+           if (it < NSTEP) then
+              stf_used = source_time_function(i_source,it+1,i_stage)
+           else
+              stf_used = 0.d0
+           end if
+        else
+           stf_used = source_time_function(i_source,it,i_stage)
+        end if
 
         ! adds source term
         ! note: we use sourcearrays for both collocated forces and moment tensors
