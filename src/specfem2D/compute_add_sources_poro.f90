@@ -40,7 +40,7 @@
   use specfem_par, only: myrank,ispec_is_poroelastic,nglob_poroelastic, &
                          NSOURCES,source_time_function,sourcearrays, &
                          islice_selected_source,ispec_selected_source, &
-                         ibool,porosity,tortuosity,density,kmato
+                         ibool,porosity,tortuosity,density,kmato,time_stepping_scheme
   implicit none
 
   real(kind=CUSTOM_REAL), dimension(NDIM,nglob_poroelastic) :: accels_poroelastic,accelw_poroelastic
@@ -77,7 +77,16 @@
         fac_w = real((1.d0 - rho_f/rho_bar),kind=CUSTOM_REAL)
 
         ! source time function
-        stf_used = source_time_function(i_source,it,i_stage)
+        if ((1 == SIMULATION_TYPE) .and. (1 == time_stepping_scheme)) then
+           ! For forward simulation using Newmark format, the source wavelet function at t+deltat time instant should be used in correction phase because a^(n+1) should be used.
+           if (it < NSTEP) then
+              stf_used = source_time_function(i_source,it+1,i_stage)
+           else
+              stf_used = 0.d0
+           end if
+        else
+           stf_used = source_time_function(i_source,it,i_stage)
+        end if
 
         ! adds source contribution
         ! note: we use sourcearrays for both, collocated force and moment tensor forces
