@@ -40,7 +40,8 @@
   use specfem_par, only: myrank,ispec_is_poroelastic,nglob_poroelastic, &
                          NSOURCES,source_time_function,sourcearrays, &
                          islice_selected_source,ispec_selected_source, &
-                         ibool,porosity,tortuosity,density,kmato,time_stepping_scheme
+                         ibool,porosity,tortuosity,density,kmato,&
+                         SIMULATION_TYPE,time_stepping_scheme
   implicit none
 
   real(kind=CUSTOM_REAL), dimension(NDIM,nglob_poroelastic) :: accels_poroelastic,accelw_poroelastic
