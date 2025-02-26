@@ -39,7 +39,8 @@
 
   use specfem_par, only: ispec_is_acoustic,nglob_acoustic, &
                          NSOURCES,source_type,source_time_function,sourcearrays, &
-                         islice_selected_source,ispec_selected_source,ibool,kappastore,myrank
+                         islice_selected_source,ispec_selected_source,ibool,kappastore,myrank, &
+                         SIMULATION_TYPE,time_stepping_scheme
   implicit none
 
   real(kind=CUSTOM_REAL), dimension(nglob_acoustic),intent(inout) :: potential_dot_dot_acoustic
@@ -60,7 +61,16 @@
       if (ispec_is_acoustic(ispec)) then
 
         ! source time function
-        stf_used = source_time_function(i_source,it,i_stage)
+        if ((1 == SIMULATION_TYPE) .and. (1 == time_stepping_scheme)) then
+           ! For forward simulation using Newmark format, the source wavelet function at t+deltat time instant should be used in correction phase because a^(n+1) should be used.
+           if (it < NSTEP) then
+              stf_used = source_time_function(i_source,it+1,i_stage)
+           else
+              stf_used = 0.d0
+           end if
+        else
+           stf_used = source_time_function(i_source,it,i_stage)
+        end if
 
         ! collocated force
         ! beware, for an acoustic medium, the source is pressure divided by Kappa of the fluid
