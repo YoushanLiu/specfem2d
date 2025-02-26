@@ -40,7 +40,7 @@
   use specfem_par, only: myrank,P_SV,ispec_is_elastic,nglob_elastic, &
                          NSOURCES,source_time_function, &
                          islice_selected_source,ispec_selected_source,sourcearrays, &
-                         ibool
+                         ibool,SIMULATITION_TYPE,time_stepping_scheme
   implicit none
 
   real(kind=CUSTOM_REAL), dimension(NDIM,nglob_elastic) :: accel_elastic
